@@ -1,4 +1,4 @@
-import vocab from "./vocab.ro.json";
+import vocab from "../vocab.ro.json";
 
 const vocabJson = JSON.stringify(vocab).replace(/</g, "\\u003c");
 
@@ -725,16 +725,20 @@ ${vocabJson}
 </html>
 `;
 
-const server = Bun.serve({
-  port: 3000,
-  fetch(_req: Request): Response {
-    return new Response(html, {
-      headers: { "Content-Type": "text/html; charset=utf-8" }
-    });
-  }
-});
+// Export handler pentru Vercel
+export default function handler(_req: Request): Response {
+  return new Response(html, {
+    headers: { "Content-Type": "text/html; charset=utf-8" }
+  });
+}
 
-const host = (server as any).hostname ?? "localhost";
-console.log(`AAC dashboard running at http://${host}:${server.port}`);
+// Development server (opțional, doar pentru local)
+if (typeof Bun !== "undefined" && import.meta.main) {
+  const server = Bun.serve({
+    port: 3000,
+    fetch: handler
+  });
 
-export {};
+  const host = (server as any).hostname ?? "localhost";
+  console.log(`AAC dashboard running at http://${host}:${server.port}`);
+}
