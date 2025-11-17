@@ -236,11 +236,25 @@ function pickVoice(): SpeechSynthesisVoice | null {
     return null;
   }
 
-  const roVoice = state.cachedVoices.find((voice) =>
-    voice.lang?.toLowerCase().startsWith("ro")
-  );
+  // Prioritizează vocile românești native, preferând Neural și locale
+  const roVoices = state.cachedVoices.filter((voice) => {
+    const lang = voice.lang?.toLowerCase();
+    return lang === "ro-ro" || lang === "ro";
+  });
 
-  return roVoice ?? state.cachedVoices[0];
+  if (!roVoices.length) {
+    console.warn("Nu s-a găsit nicio voce română. Se folosește vocea implicită.");
+    return null;
+  }
+
+  // Prioritate: Neural > local > remote
+  const neural = roVoices.find(v => v.name.toLowerCase().includes("neural"));
+  if (neural) return neural;
+
+  const local = roVoices.find(v => v.localService);
+  if (local) return local;
+
+  return roVoices[0];
 }
 
 speakBtn.addEventListener("click", () => {
@@ -259,10 +273,14 @@ speakBtn.addEventListener("click", () => {
   const voice = pickVoice();
   if (voice) {
     utter.voice = voice;
+    console.log(`Folosesc vocea: ${voice.name} (${voice.lang})`);
   }
+  
+  // Setări optimizate pentru română
   utter.lang = "ro-RO";
-  utter.rate = 1;
-  utter.pitch = 1;
+  utter.rate = 0.9; // Puțin mai lent pentru claritate
+  utter.pitch = 1.0;
+  utter.volume = 1.0;
 
   synth.speak(utter);
 });
