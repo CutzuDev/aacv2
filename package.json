@@ -1,7 +1,13 @@
 {
-  "dependencies": {},
+  "name": "aac-romanian-bun",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "vercel build",
+    "start": "vercel dev"
+  },
   "devDependencies": {
-    "@types/bun": "^1.3.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.6.0"
   }
 }

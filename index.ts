@@ -1,3 +1,7 @@
+import vocab from "./vocab.ro.json";
+
+const vocabJson = JSON.stringify(vocab).replace(/</g, "\\u003c");
+
 const html = `<!doctype html>
 <html lang="ro">
   <head>
@@ -20,7 +24,9 @@ const html = `<!doctype html>
         --tile-descriptor: #e8f0ff;
         --tile-question: #ffe9f0;
         --tile-social: #f4e8ff;
-        --tile-learning: #e0f7ff;
+        --tile-home: #ffe9d5;
+        --tile-school: #e6fff2;
+        --tile-action: #fff0f6;
       }
 
       * {
@@ -162,7 +168,7 @@ const html = `<!doctype html>
       }
 
       .category-row .btn {
-        flex: 1 1 130px;
+        flex: 1 1 120px;
         justify-content: center;
       }
 
@@ -290,8 +296,16 @@ const html = `<!doctype html>
         background: var(--tile-social);
       }
 
-      .word-tile.learning {
-        background: var(--tile-learning);
+      .word-tile.home {
+        background: var(--tile-home);
+      }
+
+      .word-tile.school {
+        background: var(--tile-school);
+      }
+
+      .word-tile.action {
+        background: var(--tile-action);
       }
 
       .word-tile:hover {
@@ -348,7 +362,7 @@ const html = `<!doctype html>
         }
 
         .category-row .btn {
-          flex: 1 1 46%;
+          flex: 1 1 45%;
         }
       }
     </style>
@@ -358,8 +372,8 @@ const html = `<!doctype html>
       <div class="card">
         <h1>Sistem AAC – Română</h1>
         <p class="subtitle">
-          Construiește propoziții în limba română folosind cuvinte în bara de
-          propoziție. Emoji-urile te ajută să găsești mai ușor cuvintele.
+          Construiește propoziții în română folosind cuvinte și emoji.
+          Cuvintele se pot rearanja prin drag and drop.
         </p>
 
         <div class="sentence-shell">
@@ -389,7 +403,7 @@ const html = `<!doctype html>
             data-category="all"
             id="cat-all"
           >
-            Toate cuvintele
+            Toate
           </button>
           <button class="btn btn-secondary" data-category="pronoun">
             Pronume
@@ -406,8 +420,14 @@ const html = `<!doctype html>
           <button class="btn btn-secondary" data-category="social">
             Social
           </button>
-          <button class="btn btn-secondary" data-category="learning">
-            Învăț AAC
+          <button class="btn btn-secondary" data-category="home">
+            Acasă
+          </button>
+          <button class="btn btn-secondary" data-category="school">
+            Școală
+          </button>
+          <button class="btn btn-secondary" data-category="action">
+            Acțiuni
           </button>
         </div>
 
@@ -432,219 +452,16 @@ const html = `<!doctype html>
       </div>
     </div>
 
+    <!-- vocabularul este injectat aici în format JSON -->
+    <script id="vocab-json" type="application/json">
+${vocabJson}
+    </script>
+
     <script>
       (function () {
-        const vocabulary = [
-          // Pronume
-          { text: "eu", type: "pronoun", emoji: "🧑" },
-          { text: "tu", type: "pronoun", emoji: "👉" },
-          { text: "el", type: "pronoun", emoji: "👦" },
-          { text: "ea", type: "pronoun", emoji: "👧" },
-          { text: "noi", type: "pronoun", emoji: "👨👩👧" },
-          { text: "voi", type: "pronoun", emoji: "🫵" },
-          { text: "ei", type: "pronoun", emoji: "👥" },
-          { text: "acesta", type: "pronoun", emoji: "☝️" },
-          { text: "aceea", type: "pronoun", emoji: "👆" },
-          { text: "cineva", type: "pronoun", emoji: "❓" },
-          { text: "nimeni", type: "pronoun", emoji: "🚫" },
-
-          // Verbe
-          { text: "vreau", type: "verb", emoji: "⭐" },
-          { text: "nu vreau", type: "verb", emoji: "🚫" },
-          { text: "pot", type: "verb", emoji: "💪" },
-          { text: "nu pot", type: "verb", emoji: "🙅" },
-          { text: "merg", type: "verb", emoji: "🚶" },
-          { text: "vin", type: "verb", emoji: "🏃" },
-          { text: "mănânc", type: "verb", emoji: "🍽️" },
-          { text: "beau", type: "verb", emoji: "🥤" },
-          { text: "dorm", type: "verb", emoji: "🛌" },
-          { text: "mă joc", type: "verb", emoji: "🎮" },
-          { text: "lucrez", type: "verb", emoji: "💻" },
-          { text: "știu", type: "verb", emoji: "✔️" },
-          { text: "nu știu", type: "verb", emoji: "❔" },
-          { text: "spun", type: "verb", emoji: "🗣️" },
-          { text: "ascult", type: "verb", emoji: "👂" },
-          { text: "privesc", type: "verb", emoji: "👀" },
-          { text: "încep", type: "verb", emoji: "▶️" },
-          { text: "termin", type: "verb", emoji: "⏹️" },
-          { text: "repet", type: "verb", emoji: "🔁" },
-          { text: "aștept", type: "verb", emoji: "⏳" },
-          { text: "arat", type: "verb", emoji: "👆" },
-          { text: "aleg", type: "verb", emoji: "✅" },
-          { text: "înțeleg", type: "verb", emoji: "💡" },
-          { text: "nu înțeleg", type: "verb", emoji: "❓" },
-
-          // Descrieri / stări
-          { text: "aici", type: "descriptor", emoji: "📍" },
-          { text: "acolo", type: "descriptor", emoji: "📍" },
-          { text: "bine", type: "descriptor", emoji: "😊" },
-          { text: "rău", type: "descriptor", emoji: "☹️" },
-          { text: "obosit", type: "descriptor", emoji: "😴" },
-          { text: "fericit", type: "descriptor", emoji: "😄" },
-          { text: "trist", type: "descriptor", emoji: "😢" },
-          { text: "durere", type: "descriptor", emoji: "🤕" },
-          { text: "foame", type: "descriptor", emoji: "🍽️" },
-          { text: "sete", type: "descriptor", emoji: "🥤" },
-          { text: "repede", type: "descriptor", emoji: "⚡" },
-          { text: "încet", type: "descriptor", emoji: "🐢" },
-          { text: "cald", type: "descriptor", emoji: "🔥" },
-          { text: "rece", type: "descriptor", emoji: "❄️" },
-          { text: "mare", type: "descriptor", emoji: "⬆️" },
-          { text: "mic", type: "descriptor", emoji: "⬇️" },
-          { text: "speriat", type: "descriptor", emoji: "😨" },
-          { text: "entuziasmat", type: "descriptor", emoji: "🤩" },
-          { text: "gata", type: "descriptor", emoji: "✅" },
-          { text: "pregătit", type: "descriptor", emoji: "🎒" },
-          { text: "ușor", type: "descriptor", emoji: "👍" },
-          { text: "greu", type: "descriptor", emoji: "💭" },
-
-          // Întrebări
-          { text: "da", type: "question", emoji: "👍" },
-          { text: "nu", type: "question", emoji: "👎" },
-          { text: "cine", type: "question", emoji: "👤" },
-          { text: "ce", type: "question", emoji: "❓" },
-          { text: "unde", type: "question", emoji: "📍" },
-          { text: "când", type: "question", emoji: "⏰" },
-          { text: "de ce", type: "question", emoji: "🧐" },
-          { text: "cum", type: "question", emoji: "🔍" },
-          {
-            text: "pot să merg la baie?",
-            type: "question",
-            emoji: "🚻"
-          },
-          { text: "poți repeta?", type: "question", emoji: "🔁" },
-          {
-            text: "poți să mă ajuți?",
-            type: "question",
-            emoji: "🆘"
-          },
-          {
-            text: "ai înțeles?",
-            type: "question",
-            emoji: "❓"
-          },
-          {
-            text: "mai încercăm o dată?",
-            type: "question",
-            emoji: "🔄"
-          },
-          {
-            text: "putem face pauză?",
-            type: "question",
-            emoji: "☕"
-          },
-
-          // Social
-          { text: "bună", type: "social", emoji: "👋" },
-          { text: "salut", type: "social", emoji: "🤝" },
-          { text: "la revedere", type: "social", emoji: "👋" },
-          { text: "te rog", type: "social", emoji: "🙏" },
-          { text: "mulțumesc", type: "social", emoji: "❤️" },
-          { text: "scuze", type: "social", emoji: "🙇" },
-          { text: "ajutor", type: "social", emoji: "🆘" },
-          { text: "îmi place", type: "social", emoji: "😍" },
-          { text: "nu îmi place", type: "social", emoji: "🙁" },
-          { text: "prieten", type: "social", emoji: "🧑🤝🧑" },
-          { text: "familie", type: "social", emoji: "👨👩👧" },
-          {
-            text: "hai să vorbim",
-            type: "social",
-            emoji: "💬"
-          },
-          {
-            text: "e rândul meu",
-            type: "social",
-            emoji: "☝️"
-          },
-          {
-            text: "e rândul tău",
-            type: "social",
-            emoji: "👉"
-          },
-          { text: "bravo", type: "social", emoji: "🎉" },
-          {
-            text: "sunt gata",
-            type: "social",
-            emoji: "✅"
-          },
-          {
-            text: "nu sunt gata",
-            type: "social",
-            emoji: "⏳"
-          },
-          {
-            text: "sunt obosit",
-            type: "social",
-            emoji: "😴"
-          },
-          {
-            text: "mă simt bine",
-            type: "social",
-            emoji: "😊"
-          },
-          {
-            text: "mă simt rău",
-            type: "social",
-            emoji: "🤒"
-          },
-
-          // Învăț AAC (explicații pentru copil / adult)
-          {
-            text: "Folosesc această tablă ca să vorbesc.",
-            type: "learning",
-            emoji: "💬"
-          },
-          {
-            text: "Învăț să folosesc aceste butoane.",
-            type: "learning",
-            emoji: "🧠"
-          },
-          {
-            text: "Este prima dată când folosesc AAC.",
-            type: "learning",
-            emoji: "🌱"
-          },
-          {
-            text: "Te rog să aștepți, am nevoie de timp.",
-            type: "learning",
-            emoji: "⏳"
-          },
-          {
-            text: "Arată-mi ce să apăs.",
-            type: "learning",
-            emoji: "👉"
-          },
-          {
-            text: "Putem exersa împreună?",
-            type: "learning",
-            emoji: "🤝"
-          },
-          {
-            text: "Spune-mi cum să spun ceva.",
-            type: "learning",
-            emoji: "🗣️"
-          },
-          {
-            text: "Vreau să învăț un cuvânt nou.",
-            type: "learning",
-            emoji: "📚"
-          },
-          {
-            text: "Poți să repeți mai încet?",
-            type: "learning",
-            emoji: "🐢"
-          },
-          {
-            text: "Te rog închide sunetele din jur.",
-            type: "learning",
-            emoji: "🔇"
-          },
-          {
-            text: "Mă ajută când arăți spre cuvinte.",
-            type: "learning",
-            emoji: "☝️"
-          }
-        ];
+        const vocabulary = JSON.parse(
+          document.getElementById("vocab-json").textContent || "[]"
+        );
 
         const wordGrid = document.getElementById("wordGrid");
         const sentenceArea = document.getElementById("sentenceArea");
