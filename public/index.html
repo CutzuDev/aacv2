@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sistem AAC – Română</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="page">
+      <div class="card">
+        <h1>Sistem AAC – Română</h1>
+        <p class="subtitle">
+          Construiește propoziții în română folosind cuvinte și emoji.
+          Cuvintele se pot rearanja prin drag and drop.
+        </p>
+
+        <div class="sentence-shell">
+          <div class="sentence-label">Propoziția ta</div>
+          <input
+            id="sentenceText"
+            class="sentence-input"
+            type="text"
+            placeholder="Construiește o propoziție..."
+            readonly
+          />
+        </div>
+
+        <div class="top-row">
+          <button id="speakBtn" class="btn btn-primary">
+            <span class="btn-icon">🔊</span>
+            Vorbește
+          </button>
+          <button id="clearBtn" class="btn btn-danger">
+            Șterge propoziția
+          </button>
+        </div>
+
+        <div class="category-row">
+          <button class="btn btn-secondary active" data-category="all">
+            Toate
+          </button>
+          <button class="btn btn-secondary" data-category="pronoun">
+            Pronume
+          </button>
+          <button class="btn btn-secondary" data-category="verb">
+            Verbe
+          </button>
+          <button class="btn btn-secondary" data-category="descriptor">
+            Descrieri
+          </button>
+          <button class="btn btn-secondary" data-category="question">
+            Întrebări
+          </button>
+          <button class="btn btn-secondary" data-category="social">
+            Social
+          </button>
+          <button class="btn btn-secondary" data-category="home">
+            Acasă
+          </button>
+          <button class="btn btn-secondary" data-category="school">
+            Școală
+          </button>
+          <button class="btn btn-secondary" data-category="action">
+            Acțiuni
+          </button>
+        </div>
+
+        <div class="content-row">
+          <div id="sentenceArea" class="sentence-area">
+            <span id="sentencePlaceholder" class="sentence-placeholder">
+              Apasă pe un cuvânt pentru a-l adăuga aici. Poți reordona cu drag
+              and drop.
+            </span>
+          </div>
+
+          <div class="word-grid-shell">
+            <div class="grid-header">
+              <div class="grid-header-title">Cuvinte</div>
+              <div class="grid-header-hint">
+                Apasă pentru a adăuga. Trage pentru a rearanja.
+              </div>
+            </div>
+            <div id="wordGrid" class="word-grid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

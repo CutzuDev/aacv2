@@ -1,0 +1,352 @@
+:root {
+  --bg: #f5f6fb;
+  --surface: #ffffff;
+  --primary: #4b6bff;
+  --primary-dark: #3242b8;
+  --danger: #f14b4b;
+  --accent: #ffd36b;
+  --text-main: #1f2933;
+  --text-muted: #6b7280;
+  --border-subtle: #e5e7eb;
+  --tile-pronoun: #fff6d5;
+  --tile-verb: #e4f8e7;
+  --tile-descriptor: #e8f0ff;
+  --tile-question: #ffe9f0;
+  --tile-social: #f4e8ff;
+  --tile-home: #ffe9d5;
+  --tile-school: #e6fff2;
+  --tile-action: #fff0f6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: radial-gradient(circle at top, #e9efff 0, #f5f6fb 40%);
+  min-height: 100vh;
+  color: var(--text-main);
+}
+
+.page {
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 16px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: 24px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+  padding: 24px 24px 28px;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.sentence-shell {
+  border-radius: 18px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  padding: 12px 16px 10px;
+  margin-bottom: 14px;
+}
+
+.sentence-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.sentence-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.sentence-input::placeholder {
+  color: #cbd5e1;
+}
+
+.top-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s ease, transform 0.05s ease,
+    box-shadow 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.btn-danger:hover {
+  background: #fecaca;
+}
+
+.btn-secondary {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.btn-secondary.active {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-icon {
+  font-size: 17px;
+}
+
+.category-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.category-row .btn {
+  flex: 1 1 120px;
+  justify-content: center;
+}
+
+.content-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sentence-area {
+  min-height: 70px;
+  border-radius: 16px;
+  border: 1px dashed #cbd5e1;
+  background: #f8fafc;
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.sentence-placeholder {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.sentence-word {
+  position: relative;
+  padding: 10px 30px 10px 14px;
+  border-radius: 14px;
+  background: white;
+  border: 1px solid #cbd5e1;
+  cursor: grab;
+  box-shadow: 0 5px 12px rgba(15, 23, 42, 0.12);
+  font-size: 16px;
+  font-weight: 600;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.sentence-word.dragging {
+  opacity: 0.6;
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+.sentence-word .delete-word {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(248, 113, 113, 0.95);
+  color: white;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+}
+
+.sentence-word:hover .delete-word {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-1px);
+}
+
+body.is-touch .sentence-word .delete-word {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.word-grid-shell {
+  border-radius: 18px;
+  border: 1px solid var(--border-subtle);
+  background: #f9fafb;
+  padding: 10px;
+  max-height: 430px;
+  overflow: auto;
+}
+
+.word-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.word-tile {
+  border-radius: 14px;
+  padding: 8px 6px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #d1d5db;
+  background: white;
+  transition: transform 0.05s ease, box-shadow 0.12s ease,
+    border-color 0.12s ease, background 0.12s ease;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.word-tile.pronoun {
+  background: var(--tile-pronoun);
+}
+
+.word-tile.verb {
+  background: var(--tile-verb);
+}
+
+.word-tile.descriptor {
+  background: var(--tile-descriptor);
+}
+
+.word-tile.question {
+  background: var(--tile-question);
+}
+
+.word-tile.social {
+  background: var(--tile-social);
+}
+
+.word-tile.home {
+  background: var(--tile-home);
+}
+
+.word-tile.school {
+  background: var(--tile-school);
+}
+
+.word-tile.action {
+  background: var(--tile-action);
+}
+
+.word-tile:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
+  border-color: var(--primary);
+}
+
+.word-tile:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.grid-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  padding: 0 2px;
+}
+
+.grid-header-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.grid-header-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+@media (max-width: 900px) {
+  .word-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  h1 {
+    font-size: 22px;
+  }
+
+  .card {
+    padding: 18px 14px 22px;
+  }
+
+  .sentence-word {
+    font-size: 15px;
+  }
+
+  .word-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .category-row .btn {
+    flex: 1 1 45%;
+  }
+}
