@@ -212,12 +212,17 @@ clearBtn.addEventListener("click", () => {
   sentenceText.value = "";
 });
 async function fetchVocabulary() {
-  const response = await fetch("/api/index");
+  const response = await fetch("/vocab.ro.json", {
+    headers: { "Cache-Control": "no-cache" }
+  });
   if (!response.ok) {
     throw new Error("Nu s-a putut \xEEnc\u0103rca vocabularul.");
   }
   const payload = await response.json();
-  return payload.vocab;
+  if (!Array.isArray(payload)) {
+    throw new Error("Formatul vocabularului nu este valid.");
+  }
+  return payload;
 }
 async function init() {
   wordGrid.textContent = "Se \xEEncarc\u0103 vocabularul...";

@@ -15,10 +15,6 @@ type VocabEntry = {
   emoji?: string;
 };
 
-type ApiResponse = {
-  vocab: VocabEntry[];
-};
-
 const state = {
   vocabulary: [] as VocabEntry[],
   currentCategory: "all" as WordCategory,
@@ -278,12 +274,17 @@ clearBtn.addEventListener("click", () => {
 });
 
 async function fetchVocabulary(): Promise<VocabEntry[]> {
-  const response = await fetch("/api/index");
+  const response = await fetch("/vocab.ro.json", {
+    headers: { "Cache-Control": "no-cache" }
+  });
   if (!response.ok) {
     throw new Error("Nu s-a putut încărca vocabularul.");
   }
-  const payload = (await response.json()) as ApiResponse;
-  return payload.vocab;
+  const payload = (await response.json()) as VocabEntry[];
+  if (!Array.isArray(payload)) {
+    throw new Error("Formatul vocabularului nu este valid.");
+  }
+  return payload;
 }
 
 async function init() {
