@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "vercel dev",
-    "build": "vercel build",
-    "start": "vercel dev"
+    "dev": "bun run api/index.ts"
   },
   "devDependencies": {
     "typescript": "^5.6.0"
