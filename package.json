@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "bun run api/index.ts"
+    "dev": "node api/index.ts"
   },
   "devDependencies": {
     "typescript": "^5.6.0"
