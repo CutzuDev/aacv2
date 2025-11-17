@@ -8,7 +8,8 @@ export type WordCategory =
   | "social"
   | "home"
   | "school"
-  | "action";
+  | "action"
+  | "connector";
 
 export type VocabEntry = {
   text: string;

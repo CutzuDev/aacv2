@@ -215,5 +215,14 @@
   { "text": "merg acasă", "type": "action", "emoji": "🏠" },
   { "text": "merg la baie", "type": "action", "emoji": "🚻" },
   { "text": "respir adânc", "type": "action", "emoji": "😮💨" },
-  { "text": "fac pauză", "type": "action", "emoji": "☕" }
+  { "text": "fac pauză", "type": "action", "emoji": "☕" },
+
+  { "text": "să", "type": "connector", "emoji": "🔗" },
+  { "text": "și", "type": "connector", "emoji": "➕" },
+  { "text": "dar", "type": "connector", "emoji": "↔️" },
+  { "text": "pentru", "type": "connector", "emoji": "🎯" },
+  { "text": "cu", "type": "connector", "emoji": "🤝" },
+  { "text": "la", "type": "connector", "emoji": "➡️" },
+  { "text": "de", "type": "connector", "emoji": "📝" },
+  { "text": "în", "type": "connector", "emoji": "📍" }
 ]

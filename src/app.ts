@@ -7,7 +7,8 @@ type WordCategory =
   | "social"
   | "home"
   | "school"
-  | "action";
+  | "action"
+  | "connector";
 
 type VocabEntry = {
   text: string;
