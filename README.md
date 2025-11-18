@@ -207,7 +207,7 @@ const isTouchDevice = "ontouchstart" in window || ...
 - Când apeși pe un buton de categorie, actualizează `state.currentCategory`
 - Re-desenează grid-ul cu doar cuvintele din categoria selectată
 
-**Funcția de TTS cu Gemini (Linii 218-260)** ⭐ **NOU**
+**Funcția de TTS cu Gemini (Linii 218-260)**  **NOU**
 - `speakWithGemini()` – funcție asincronă care gestionează întregul flux TTS:
   1. Trimite cerere POST către `/api/tts` cu textul
   2. Verifică răspunsul și extrage audio-ul base64
@@ -248,7 +248,7 @@ const isTouchDevice = "ontouchstart" in window || ...
 - La cerere GET pe `/api`, returnează JSON-ul
 - Adaugă headere de cache pentru performanță
 
-### 5B. `api/tts.ts` – API Gemini Text-to-Speech ⭐ **NOU**
+### 5B. `api/tts.ts` – API Gemini Text-to-Speech  **NOU**
 **Ce este?** Endpoint serverless care generează audio de înaltă calitate folosind **Gemini 2.5 Flash TTS**.
 
 **De ce Gemini?** 
@@ -358,7 +358,7 @@ const isTouchDevice = "ontouchstart" in window || ...
 
 ## 🚀 Cum Să Lucrezi cu Proiectul
 
-### 0. Configurare Gemini API Key ⭐ **OBLIGATORIU**
+### 0. Configurare Gemini API Key  **OBLIGATORIU**
 
 Pentru ca funcționalitatea TTS să funcționeze, trebuie să configurezi un API key de la Google:
 
@@ -475,7 +475,7 @@ JavaScript cu tipuri statice. Previne multe bug-uri prin verificarea tipurilor l
 ### 3. **esbuild** (https://esbuild.github.io)
 Bundler extrem de rapid care împachetează toate modulele TypeScript într-un singur fișier JavaScript.
 
-### 4. **Gemini 2.5 Flash TTS** ⭐ (https://ai.google.dev)
+### 4. **Gemini 2.5 Flash TTS**  (https://ai.google.dev)
 Model AI de la Google pentru generare voce text-to-speech de înaltă calitate. Suportă 100+ limbi, inclusiv română nativă. Folosește SDK oficial `@google/genai`.
 
 **Caracteristici:**
