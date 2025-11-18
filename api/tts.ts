@@ -44,14 +44,29 @@ function createWavHeader(pcmLength: number, sampleRate = 24000, channels = 1, bi
 }
 
 export default async function handler(request: any): Promise<Response> {
+  // Add CORS headers
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
+  };
+
+  // Handle OPTIONS preflight request
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
   if (request.method !== "POST") {
-    return new Response("Method Not Allowed", { status: 405 });
+    return new Response("Method Not Allowed", { 
+      status: 405,
+      headers: corsHeaders
+    });
   }
 
   if (!GEMINI_API_KEY) {
     return Response.json(
       { error: "GEMINI_API_KEY nu este configurat" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 
@@ -74,7 +89,7 @@ export default async function handler(request: any): Promise<Response> {
     if (!text || text.length > 500) {
       return Response.json(
         { error: "Text invalid (max 500 caractere)" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -99,7 +114,7 @@ export default async function handler(request: any): Promise<Response> {
     if (!pcmBase64) {
       return Response.json(
         { error: "Nu s-a primit audio de la Gemini" },
-        { status: 500 }
+        { status: 500, headers: corsHeaders }
       );
     }
 
@@ -121,12 +136,14 @@ export default async function handler(request: any): Promise<Response> {
     return Response.json({
       audio: wavBase64,
       mimeType: "audio/wav"
+    }, {
+      headers: corsHeaders
     });
   } catch (error: any) {
     console.error("TTS error:", error);
     return Response.json(
       { error: error?.message || "Eroare internă la procesarea TTS" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
