@@ -1,4 +1,5 @@
-import handler from "./api/index";
+import vocabHandler from "./api/index";
+import ttsHandler from "./api/tts";
 import { join, normalize } from "node:path";
 import { stat } from "node:fs/promises";
 
@@ -45,8 +46,12 @@ const server = Bun.serve({
   fetch(request) {
     const url = new URL(request.url);
 
+    if (url.pathname === "/api/tts") {
+      return ttsHandler(request);
+    }
+
     if (url.pathname.startsWith("/api")) {
-      return handler(request);
+      return vocabHandler(request);
     }
 
     return serveStatic(url.pathname);

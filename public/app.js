@@ -4,7 +4,7 @@ var state = {
   currentCategory: "all",
   draggedElement: null,
   touchDragging: false,
-  cachedVoices: []
+  isSpeaking: false
 };
 function byId(id) {
   const element = document.getElementById(id);
@@ -164,46 +164,51 @@ categoryButtons.forEach((button) => {
     renderGrid();
   });
 });
-function loadVoices() {
-  if (!("speechSynthesis" in window)) {
-    return;
+async function speakWithGemini(text) {
+  const response = await fetch("/api/tts", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text })
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || "Eroare la generarea vocii");
   }
-  state.cachedVoices = window.speechSynthesis.getVoices();
-  if (!state.cachedVoices.length) {
-    setTimeout(loadVoices, 500);
+  const data = await response.json();
+  if (!data.audio) {
+    throw new Error("Nu s-a primit audio de la server");
   }
+  const audioBlob = await (await fetch(`data:${data.mimeType};base64,${data.audio}`)).blob();
+  const audioUrl = URL.createObjectURL(audioBlob);
+  const audio = new Audio(audioUrl);
+  await new Promise((resolve, reject) => {
+    audio.onended = () => {
+      URL.revokeObjectURL(audioUrl);
+      resolve();
+    };
+    audio.onerror = () => {
+      URL.revokeObjectURL(audioUrl);
+      reject(new Error("Eroare la redarea audio"));
+    };
+    audio.play().catch(reject);
+  });
 }
-if ("speechSynthesis" in window) {
-  window.speechSynthesis.onvoiceschanged = loadVoices;
-  loadVoices();
-}
-function pickVoice() {
-  if (!state.cachedVoices.length) {
-    return null;
-  }
-  const roVoice = state.cachedVoices.find(
-    (voice) => voice.lang?.toLowerCase().startsWith("ro")
-  );
-  return roVoice ?? state.cachedVoices[0];
-}
-speakBtn.addEventListener("click", () => {
-  if (!("speechSynthesis" in window)) {
-    alert("Browserul t\u0103u nu suport\u0103 \xEEnc\u0103 func\u021Bia de vorbire.");
-    return;
-  }
+speakBtn.addEventListener("click", async () => {
   const text = sentenceText.value.trim();
-  if (!text) return;
-  const synth = window.speechSynthesis;
-  synth.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  const voice = pickVoice();
-  if (voice) {
-    utter.voice = voice;
+  if (!text || state.isSpeaking) return;
+  state.isSpeaking = true;
+  speakBtn.disabled = true;
+  speakBtn.textContent = "\u{1F50A} Se \xEEncarc\u0103...";
+  try {
+    await speakWithGemini(text);
+  } catch (error) {
+    console.error("Gemini TTS error:", error);
+    alert(error instanceof Error ? error.message : "Eroare la generarea vocii");
+  } finally {
+    state.isSpeaking = false;
+    speakBtn.disabled = false;
+    speakBtn.innerHTML = '<span class="btn-icon">\u{1F50A}</span>Vorbe\u0219te';
   }
-  utter.lang = "ro-RO";
-  utter.rate = 1;
-  utter.pitch = 1;
-  synth.speak(utter);
 });
 clearBtn.addEventListener("click", () => {
   sentenceArea.innerHTML = "";

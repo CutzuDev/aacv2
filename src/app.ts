@@ -21,7 +21,7 @@ const state = {
   currentCategory: "all" as WordCategory,
   draggedElement: null as HTMLDivElement | null,
   touchDragging: false,
-  cachedVoices: [] as SpeechSynthesisVoice[]
+  isSpeaking: false
 };
 
 function byId<T extends HTMLElement>(id: string): T {
@@ -216,73 +216,61 @@ categoryButtons.forEach((button) => {
   });
 });
 
-function loadVoices() {
-  if (!("speechSynthesis" in window)) {
-    return;
-  }
-  state.cachedVoices = window.speechSynthesis.getVoices();
-  if (!state.cachedVoices.length) {
-    setTimeout(loadVoices, 500);
-  }
-}
 
-if ("speechSynthesis" in window) {
-  window.speechSynthesis.onvoiceschanged = loadVoices;
-  loadVoices();
-}
 
-function pickVoice(): SpeechSynthesisVoice | null {
-  if (!state.cachedVoices.length) {
-    return null;
-  }
-
-  // Prioritizează vocile românești native, preferând Neural și locale
-  const roVoices = state.cachedVoices.filter((voice) => {
-    const lang = voice.lang?.toLowerCase();
-    return lang === "ro-ro" || lang === "ro";
+async function speakWithGemini(text: string): Promise<void> {
+  const response = await fetch("/api/tts", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text })
   });
 
-  if (!roVoices.length) {
-    console.warn("Nu s-a găsit nicio voce română. Se folosește vocea implicită.");
-    return null;
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || "Eroare la generarea vocii");
   }
 
-  // Prioritate: Neural > local > remote
-  const neural = roVoices.find(v => v.name.toLowerCase().includes("neural"));
-  if (neural) return neural;
+  const data = await response.json();
+  if (!data.audio) {
+    throw new Error("Nu s-a primit audio de la server");
+  }
 
-  const local = roVoices.find(v => v.localService);
-  if (local) return local;
+  // Convertește base64 în audio și redă
+  const audioBlob = await (await fetch(`data:${data.mimeType};base64,${data.audio}`)).blob();
+  const audioUrl = URL.createObjectURL(audioBlob);
+  const audio = new Audio(audioUrl);
 
-  return roVoices[0];
+  await new Promise<void>((resolve, reject) => {
+    audio.onended = () => {
+      URL.revokeObjectURL(audioUrl);
+      resolve();
+    };
+    audio.onerror = () => {
+      URL.revokeObjectURL(audioUrl);
+      reject(new Error("Eroare la redarea audio"));
+    };
+    audio.play().catch(reject);
+  });
 }
 
-speakBtn.addEventListener("click", () => {
-  if (!("speechSynthesis" in window)) {
-    alert("Browserul tău nu suportă încă funcția de vorbire.");
-    return;
-  }
-
+speakBtn.addEventListener("click", async () => {
   const text = sentenceText.value.trim();
-  if (!text) return;
+  if (!text || state.isSpeaking) return;
 
-  const synth = window.speechSynthesis;
-  synth.cancel();
+  state.isSpeaking = true;
+  speakBtn.disabled = true;
+  speakBtn.textContent = "🔊 Se încarcă...";
 
-  const utter = new SpeechSynthesisUtterance(text);
-  const voice = pickVoice();
-  if (voice) {
-    utter.voice = voice;
-    console.log(`Folosesc vocea: ${voice.name} (${voice.lang})`);
+  try {
+    await speakWithGemini(text);
+  } catch (error) {
+    console.error("Gemini TTS error:", error);
+    alert(error instanceof Error ? error.message : "Eroare la generarea vocii");
+  } finally {
+    state.isSpeaking = false;
+    speakBtn.disabled = false;
+    speakBtn.innerHTML = '<span class="btn-icon">🔊</span>Vorbește';
   }
-  
-  // Setări optimizate pentru română
-  utter.lang = "ro-RO";
-  utter.rate = 0.9; // Puțin mai lent pentru claritate
-  utter.pitch = 1.0;
-  utter.volume = 1.0;
-
-  synth.speak(utter);
 });
 
 clearBtn.addEventListener("click", () => {
