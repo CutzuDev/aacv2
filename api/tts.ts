@@ -43,7 +43,7 @@ function createWavHeader(pcmLength: number, sampleRate = 24000, channels = 1, bi
   return header;
 }
 
-export default async function handler(request: Request): Promise<Response> {
+export default async function handler(request: any): Promise<Response> {
   if (request.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405 });
   }
@@ -56,7 +56,18 @@ export default async function handler(request: Request): Promise<Response> {
   }
 
   try {
-    const body = (await request.json()) as TtsRequest;
+    // Parse request body - handle both Vercel and Bun formats
+    let body: TtsRequest;
+    if (typeof request.body === 'string') {
+      body = JSON.parse(request.body);
+    } else if (request.body && typeof request.body === 'object') {
+      body = request.body;
+    } else {
+      // For standard Request objects
+      const text = await new Response(request.body).text();
+      body = JSON.parse(text);
+    }
+    
     const text = body.text?.trim();
     const voiceName = body.voiceName || "Kore";
 
